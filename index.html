@@ -1,0 +1,503 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>The Debugging Guide &#8212; The Debugging Guide 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-debugging-guide">
+<h1>The Debugging Guide<a class="headerlink" href="#the-debugging-guide" title="Permalink to this headline">¶</a></h1>
+<p>Even the most seasoned programmer makes mistakes, so implementing software will
+always involve some amount of <em>debugging</em>: finding and fixing errors in your code.
+While there are many tools that can aid in debugging, using these tools is not necessarily hard;
+what is hard is understanding the errors you encounter, and devising a strategy to
+resolve those errors.</p>
+<p>In this guide, we are going to cover the following:</p>
+<ul>
+<li><p class="first"><strong>Common types of programming errors</strong>. When beginner programmers encounter an
+error (any error) they usually throw their arms in the air and try random changes
+until the bug is fixed (or immediately ask for help). Understanding what type of
+error you’re encountering can help you select a course of action to resolve that
+bug (it is important to understand that not all errors are the same: the best
+course of action for a given error may not be the same for another).</p>
+</li>
+<li><p class="first"><strong>Debugging techniques</strong>. There are a number of different debugging techniques
+you can apply to resolve errors in your code.</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>Reactive</em>: Actions you take once a bug happens.</li>
+<li><dl class="first docutils">
+<dt><em>Preemptive</em>: Actions you can take <em>before</em> a bug happens to make that bug</dt>
+<dd>easier to resolve.</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>Asking for help</strong>. Sometimes, you will not be able to resolve a bug by yourself,
+and will need to ask a more expert programmer for help. However, you will need to
+provide that person with enough information for them to help you.</p>
+</li>
+</ul>
+<p>We will use C examples and the GDB debugger to explain some of these concepts.
+Readers are assumed to be familiar with how to use GCC from the command-line, as
+well as the compiling and linking in general. No prior knowledge of GDB is assumed.</p>
+<p>The examples can be found in the <code class="docutils literal notranslate"><span class="pre">examples</span></code> directory of our GitHub
+repository: <a class="reference external" href="https://github.com/uchicago-cs/debugging-guide">https://github.com/uchicago-cs/debugging-guide</a></p>
+<p>This guide was originally written for <a class="reference external" href="https://uchicago-cs.github.io/cmsc22000/">CMSC 22000 Introduction to Software Development</a>
+at the University of Chicago.</p>
+<div class="section" id="types-of-programming-errors">
+<h2>Types of Programming Errors<a class="headerlink" href="#types-of-programming-errors" title="Permalink to this headline">¶</a></h2>
+<p>We can classify programming errors into three general categories:</p>
+<ul class="simple">
+<li><strong>Compiler/Linker errors</strong>: Errors that prevent your code from compiling/linking in
+the first place. These are often syntax errors, but may include other types of
+errors (e.g., undefined references when linking)</li>
+<li><strong>Runtime errors</strong>: Errors that make your program crash in some way.</li>
+<li><strong>Logic errors</strong>: Errors that don’t make your program crash, but result in
+incorrect behavior.</li>
+</ul>
+<div class="section" id="compiler-linker-errors">
+<h3>Compiler/Linker Errors<a class="headerlink" href="#compiler-linker-errors" title="Permalink to this headline">¶</a></h3>
+<p>Compiler/Linker errors occur when we try to build our program, and are unable to do
+so because of an issue in our code (this means we can’t even run our code)</p>
+<p>This type of error is, arguably, the easiest to fix, because modern compilers will
+often tell us exactly what is wrong in our code (down to the line where the error
+was detected). However, interpreting these error messages can sometimes be challenging</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">examples/compile-error</span></code> directory, try compiling <code class="docutils literal notranslate"><span class="pre">compile-error.c</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gcc</span> <span class="nb">compile</span><span class="o">-</span><span class="n">error</span><span class="o">.</span><span class="n">c</span> <span class="o">-</span><span class="n">o</span> <span class="nb">compile</span><span class="o">-</span><span class="n">error</span>
+</pre></div>
+</div>
+<p>It should produce the following error:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">compile</span><span class="o">-</span><span class="n">error</span><span class="o">.</span><span class="n">c</span><span class="p">:</span> <span class="n">In</span> <span class="n">function</span> <span class="s1">&#39;main&#39;</span><span class="p">:</span>
+<span class="nb">compile</span><span class="o">-</span><span class="n">error</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">7</span><span class="p">:</span><span class="mi">5</span><span class="p">:</span> <span class="n">error</span><span class="p">:</span> <span class="n">expected</span> <span class="s1">&#39;;&#39;</span> <span class="n">before</span> <span class="s1">&#39;return&#39;</span>
+     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+     <span class="o">^</span>
+</pre></div>
+</div>
+<p>This is a <strong>compiler error</strong> and it seems pretty helpful: it is telling us the file,
+function, and line (7) where the error is detected. It’s even telling us the <em>character</em>
+in that line that triggered the error (the fifth character).</p>
+<p>However, if we look at the code, we can see that the error actually originates in line 5:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">printf</span><span class="p">(</span><span class="s2">&quot;Hello, world!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The line is missing a semicolon at the end, but this issue is not detected until line 7
+(when the compiler encounters a “return” statement when it expected a semicolon)</p>
+<div class="admonition-debugging-rule-of-thumb-1 admonition">
+<p class="first admonition-title">Debugging Rule of Thumb #1</p>
+<p class="last">When a compiler gives you a line number, it doesn’t necessarily mean that line is incorrect
+(and that is has to be fixed). Always look at the offending lines <em>and</em> the lines before
+it to see if you can spot the issue.</p>
+</div>
+<p>In the <code class="docutils literal notranslate"><span class="pre">examples/link-error/</span></code> directory, try doing this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gcc</span> <span class="n">main</span><span class="o">.</span><span class="n">c</span> <span class="n">greet</span><span class="o">.</span><span class="n">c</span> <span class="o">-</span><span class="n">o</span> <span class="n">greet</span>
+</pre></div>
+</div>
+<p>It should produce the following error:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/tmp/ccyLGeRy.o: In function `main&#39;:
+main.c:(.text+0x14): undefined reference to `bye&#39;
+collect2: error: ld returned 1 exit status
+</pre></div>
+</div>
+<p>This is a <strong>linker error</strong>, not a compiler error. Remember what’s happening behind the scenes:</p>
+<ul>
+<li><p class="first">The compiler first compiles <code class="docutils literal notranslate"><span class="pre">main.c</span></code> and <code class="docutils literal notranslate"><span class="pre">greet.c</span></code> into object files. Let’s do this explicitly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gcc</span> <span class="n">main</span><span class="o">.</span><span class="n">c</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">o</span> <span class="n">main</span><span class="o">.</span><span class="n">o</span>
+<span class="n">gcc</span> <span class="n">greet</span><span class="o">.</span><span class="n">c</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">o</span> <span class="n">greet</span><span class="o">.</span><span class="n">o</span>
+</pre></div>
+</div>
+<p>(the “-c” flag tells gcc to only run the compile phase, and not the linking phase)</p>
+<p>Notice how we get no errors.</p>
+</li>
+<li><p class="first">Next, it links them together to produce the executable. If we do this explicilty, we get
+the same error as before:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gcc</span> <span class="n">greet</span><span class="o">.</span><span class="n">o</span> <span class="n">main</span><span class="o">.</span><span class="n">o</span> <span class="o">-</span><span class="n">o</span> <span class="n">main</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>When compiling a single C file, an object file can have <em>undefined references</em>. This is normal,
+and even expected: the linker will take care of resolving those undefined references.
+What the error above is telling us is that the linker was unable to resolve one such reference.</p>
+<p>If we look at <code class="docutils literal notranslate"><span class="pre">main.c</span></code> and <code class="docutils literal notranslate"><span class="pre">greet.h</span></code> (which is included in <code class="docutils literal notranslate"><span class="pre">main.c</span></code>). We can see that we
+call a function called <code class="docutils literal notranslate"><span class="pre">bye</span></code>, and that it is declared in <code class="docutils literal notranslate"><span class="pre">greet.h</span></code>. This is why we are
+able to compile <code class="docutils literal notranslate"><span class="pre">main.c</span></code> individually. However, if we look at <code class="docutils literal notranslate"><span class="pre">greet.c</span></code>, we can see that
+it doesn’t include a <code class="docutils literal notranslate"><span class="pre">bye</span></code> function, it includes a <code class="docutils literal notranslate"><span class="pre">goodbye</span></code> function.</p>
+<p>This is why we get an error:</p>
+<ul class="simple">
+<li>The <code class="docutils literal notranslate"><span class="pre">greet.h</span></code> header file includes a declaration for <code class="docutils literal notranslate"><span class="pre">bye()</span></code>. This basically
+says “there is an implementation for <code class="docutils literal notranslate"><span class="pre">bye()</span></code> somewhere else”. So, compiling
+<code class="docutils literal notranslate"><span class="pre">main.c</span></code> by itself results in the call to <code class="docutils literal notranslate"><span class="pre">bye()</span></code> having an undefined
+reference, under the expectation that we will simply link with the implementation
+of <code class="docutils literal notranslate"><span class="pre">bye</span></code> at a later point.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">greet.c</span></code> file contains no <code class="docutils literal notranslate"><span class="pre">bye()</span></code> function so, when we link <code class="docutils literal notranslate"><span class="pre">main.o</span></code>
+and <code class="docutils literal notranslate"><span class="pre">greet.o</span></code>, the linker complains that it was unable to find an implementation for <code class="docutils literal notranslate"><span class="pre">bye</span></code>.</li>
+</ul>
+<p>Linker errors can be more cryptic than compiler errors (notice how the error message doesn’t tell
+us the line where the undefined reference happens). We can make them slightly less cryptic by
+using GCC’s <code class="docutils literal notranslate"><span class="pre">-g</span></code> flag:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ gcc -g main.c greet.c -o greet
+/tmp/ccXCYkEk.o: In function `main&#39;:
+/home/borja/cs220/link-error/main.c:6: undefined reference to `bye&#39;
+collect2: error: ld returned 1 exit status
+</pre></div>
+</div>
+<p>This flag tells GCC to include debugging information in the object files, which allows the linker
+to print a more helpful message (because it now knows the exact line where the undefined reference
+happens). You should get into the habit of always using the <code class="docutils literal notranslate"><span class="pre">-g</span></code> flag, except for producing the final
+version of your program (the <code class="docutils literal notranslate"><span class="pre">-g</span></code> flag increases the size of your object files, and is unnecessary
+once the software is in production).</p>
+<p>Let’s look at another example. In the <code class="docutils literal notranslate"><span class="pre">examples/spurious</span></code> directory, try doing this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gcc</span> <span class="n">spurious</span><span class="o">.</span><span class="n">c</span> <span class="o">-</span><span class="n">o</span> <span class="n">spurious</span>
+</pre></div>
+</div>
+<p>This will produce <em>a lot</em> of compiler warnings, but the compilation will ultimately succeed.
+However, if we try to run the program, we will get a segmentation fault.</p>
+<p>How do we go about solving this error? We need to follow these rules of thumb:</p>
+<div class="admonition-debugging-rule-of-thumb-2 admonition">
+<p class="first admonition-title">Debugging Rule of Thumb #2</p>
+<p>If a compiler spits out multiple errors/warnings, start by trying to resolve <em>only</em> the first one.
+It is likely that the rest of the errors/warning are <strong>spurious errors</strong> (errors that result
+from a previous error) that will go away as soon as you resolve the first error.</p>
+<p class="last"><em>Corollary</em>: Don’t get overwhelmed when you get a huge number of errors. Focus on the first one, solve
+it, and try compiling again. If you get a different set of errors, repeat the process: focus only on
+the first one, solve it, etc.</p>
+</div>
+<div class="admonition-debugging-rule-of-thumb-3 admonition">
+<p class="first admonition-title">Debugging Rule of Thumb #3</p>
+<p>Treat warnings as seriously as compiler errors. While a warning will still allow your program to
+compile, it may be a sign of trouble further down the road.</p>
+<p class="last"><em>Corollary</em>: Do not try to debug runtime errors (like segfaults) until you have resolved all
+compiler warnings.</p>
+</div>
+<p>In the above example, the warning message is directly related to why we get a segfault later on:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spurious</span><span class="o">.</span><span class="n">c</span><span class="p">:</span> <span class="n">In</span> <span class="n">function</span> <span class="s1">&#39;main&#39;</span><span class="p">:</span>
+<span class="n">spurious</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">9</span><span class="p">:</span><span class="mi">7</span><span class="p">:</span> <span class="n">warning</span><span class="p">:</span> <span class="n">assignment</span> <span class="n">makes</span> <span class="n">integer</span> <span class="kn">from</span> <span class="nn">pointer</span> <span class="n">without</span> <span class="n">a</span> <span class="n">cast</span> <span class="p">[</span><span class="o">-</span><span class="n">Wint</span><span class="o">-</span><span class="n">conversion</span><span class="p">]</span>
+     <span class="n">s</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This warning can make us realize that we should’ve declared <code class="docutils literal notranslate"><span class="pre">s</span></code> as <code class="docutils literal notranslate"><span class="pre">char*</span></code> not as <code class="docutils literal notranslate"><span class="pre">char</span></code>.
+If we fix this, our program will compile and run correctly.</p>
+<p><strong>Note</strong>: In this simple example, we could’ve spotted the error by code inspection. However, a
+silly typo like this (forgetting a <code class="docutils literal notranslate"><span class="pre">*</span></code>) is not uncommon and, in a much larger codebase, it
+can be hard to track down the issue just by code inspection (unless you heed the compiler’s
+warnings to focus your search).</p>
+</div>
+<div class="section" id="runtime-errors">
+<h3>Runtime Errors<a class="headerlink" href="#runtime-errors" title="Permalink to this headline">¶</a></h3>
+<p>Runtime errors are errors that make a program crash while it is running. In C, this often results
+in a “Segmentation fault” (or “segfault”) resulting from your program trying to access regions of
+memory it shouldn’t access. This error is actually triggered by the operating system itself: when
+it detects that you’re trying to access an illegal memory address, it will simply kill your program
+and, at least in C, this results in a single very unhelpful error message: “Segmentation fault”.</p>
+<p>In other programming languages, like Java or Python, runtime errors may provide more helpful error
+messages, typically telling you the exact place where the error happened. For example, in the
+<code class="docutils literal notranslate"><span class="pre">examples/runtime/</span></code> directory we have two implementations of the same program in C and Python. This
+program takes two integers as command-line parameters and divides them:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ gcc runtime-error.c -o runtime-error
+$ ./runtime-error 10 2
+a / b = 5
+$ python3 runtime-error.py 10 2
+a / b = 5
+</pre></div>
+</div>
+<p>However, if we try dividing by zero (which will also make a program crash), the level of detail
+in the errors is much different:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./runtime-error 10 0
+Floating point exception
+$ python3 runtime-error.py 10 0
+Traceback (most recent call last):
+  File &quot;runtime-error.py&quot;, line 19, in &lt;module&gt;
+    x = bar(a, b)
+  File &quot;runtime-error.py&quot;, line 9, in bar
+    return foo(a, b)
+  File &quot;runtime-error.py&quot;, line 6, in foo
+    return a // b
+ZeroDivisionError: integer division or modulo by zero
+</pre></div>
+</div>
+<p>As we’ll see later on, we will have to use a debugger (like GDB) to track down the origin of the
+error in C but, ultimately, it is generally possible to track down the origin of runtime errors
+down to the exact line that triggers them (some languages, like Python and Java, will give us
+that information right away; others will require using a debugger as an additional step).</p>
+</div>
+<div class="section" id="logic-errors">
+<h3>Logic errors<a class="headerlink" href="#logic-errors" title="Permalink to this headline">¶</a></h3>
+<p>When your program compiles and runs (without crashes) but exhibits incorrect behavior, that is
+known as a logic error (i.e., there is an error in the “logic” of your program). For example,
+let’s look at <code class="docutils literal notranslate"><span class="pre">distance.c</span></code> in the <code class="docutils literal notranslate"><span class="pre">examples/logic/</span></code> directory. It takes four command-line
+parameters X1 Y1 X2 Y2 representing two points in 2-dimensional space, and computes the distance
+between them:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ gcc distance.c -o distance -lm
+$ ./distance 0 0 1 0
+The distance from (0.00, 0.00) to (1.00, 0.00) is 1.00
+$ ./distance 0 0 3 4
+The distance from (0.00, 0.00) to (3.00, 4.00) is 5.00
+</pre></div>
+</div>
+<p>This looks like this program is working fine. However, if we try a few other values, we get
+incorrect distances:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./distance -1 0 1 0
+The distance from (-1.00, 0.00) to (1.00, 0.00) is 0.00
+$ ./distance -1 -1 2 3
+The distance from (-1.00, -1.00) to (2.00, 3.00) is 2.24
+</pre></div>
+</div>
+<p>The correct distances are 2 and 5, respectively.</p>
+<p>Logic errors are probably the hardest errors to debug, because, unlike compiler and runtime errors,
+we are not given a specific line to look at. This is specially true when the program exhibits correct
+behaviour in some cases but not in others. As we’ll describe soon, we have to be specially methodic
+to track down these kind of errors.</p>
+</div>
+</div>
+<div class="section" id="debugging-techniques">
+<h2>Debugging Techniques<a class="headerlink" href="#debugging-techniques" title="Permalink to this headline">¶</a></h2>
+<p>Not all errors are debugged in the same way, and we need to make sure we use the right strategy for
+the right error.</p>
+<p>Most debugging is <em>reactive</em>: an error happens, and we try to find the cause of that error so we can fix it.
+Debugging is said to be like investigating a murder where you are both the detective and the murderer.</p>
+<p>Solving compiler/linker errors can generally be done by applying the rules of thumb 1-3 we have already described.</p>
+<p>Solving runtime errors can usually be done by using a debugger, which can provide additional information
+about the error. In the case of segfaults, it can tell you the exact line where the segfault is happening.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The guide currently does not include specific instructions on how to use a debugger to do this. In the interim,
+you may want to take a look at the <a class="reference external" href="https://uchicago-cs.github.io/cmsc22000/labs/lab4/">Debugging Lab</a>
+from CMSC 22000 (the class this guide was written for).</p>
+</div>
+<p>Solving logic errors is trickier (as we saw earlier, we don’t get clues on where the error may be located).</p>
+<div class="admonition-debugging-rule-of-thumb-4 admonition">
+<p class="first admonition-title">Debugging Rule of Thumb #4</p>
+<p class="last">When debugging an error (but specially a logic error). Narrow down your search as much as possible.
+Start by focusing on the likely source of the error, and then refine your search using the techniques
+described below. Don’t waste your time looking through the parts of the code that actually work.</p>
+</div>
+<p>Below we describe a number of debugging techniques that can be used to narrow down the origin of runtime
+and logic errors. The first two, printf debugging and using a debugger, are <em>reactive</em> techniques: we
+use them when a bug manifests itself. The remaining ones are <em>preemptive</em>: they involve writing code
+that doesn’t impact the functionality of our program, but which either helps us catch bugs sooner,
+or makes it easier for us to debug our program when bugs do surface.</p>
+<div class="section" id="printf-debugging">
+<h3>printf debugging<a class="headerlink" href="#printf-debugging" title="Permalink to this headline">¶</a></h3>
+<p>We add printf statements in our code to print out the values of variables (or, more generally, to get a
+better sense of the state of the running program) and re-run the program. Sometimes, seeing those values
+will help us to immediately realize what the problem is (specially when a variable has a value we did not expect)</p>
+<p>For example, let’s say that your program is printing an incorrect value that is computed by calling
+functions A, B, and C. You should print the return value of each of those functions, to see if it is
+correct. Let’s say that B returns an incorrect value; you then narrow down your search to function B.
+You could then print out the values of the local variables at certain key points, to see whether
+they are being updated correctly.</p>
+<div class="admonition-debugging-rule-of-thumb-5 admonition">
+<p class="first admonition-title">Debugging Rule of Thumb #5</p>
+<p><strong>Assume nothing, verify everything.</strong></p>
+<p class="last">If you find yourself thinking “I’m pretty sure this variable has the
+expected value” and “No need to bother debugging this function, I’m sure it works correctly”, you
+should still verify that this is the case.</p>
+</div>
+</div>
+<div class="section" id="using-a-debugger">
+<h3>Using a debugger<a class="headerlink" href="#using-a-debugger" title="Permalink to this headline">¶</a></h3>
+<p>“print debugging” is an easy technique that sometimes yields immediate results. However, it is a
+tedious technique if you’re dealing with an insidious bug that requires tracing through several
+functions, variables, etc. to find the issue. If you find yourself writing more than ten printf
+statements, that’s a sign you may need to switch to using a debugger.</p>
+<p>A debugger (like GDB) provides you with powerful tools to trace the execution of your program,
+and to observe the evolution of its state (e.g., the values of all the variables) as the program
+runs. In a sense, this is not that different from printf debugging, except you get to “print”
+every single variable at every single line of code.</p>
+</div>
+<div class="section" id="assertions">
+<h3>Assertions<a class="headerlink" href="#assertions" title="Permalink to this headline">¶</a></h3>
+<p>Most modern programming languages include the ability to add <em>assertions</em> in our code. An assertion
+is a boolean condition which, if false, will make our program exit immediately, with a helpful message
+telling us what boolean condition failed.</p>
+<p>For example, see the <code class="docutils literal notranslate"><span class="pre">array.c</span></code> file in <code class="docutils literal notranslate"><span class="pre">examples/assertions/</span></code>. It includes an <code class="docutils literal notranslate"><span class="pre">add_array</span></code>
+function that includes an assertion:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">add_array</span><span class="p">(</span><span class="nb">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="nb">int</span> <span class="n">length</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">assert</span><span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="n">NULL</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If we were to call <code class="docutils literal notranslate"><span class="pre">add_array</span></code> with a NULL pointer, our code would crash. This would result in a segfault
+and, as we saw previously, we would likely be able to trace the exact cause of the error, but it would
+mean firing up a debugger, etc. With an assertion, on the other hand, the same situation will result
+in the program crashing with an error message like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>array: array.c:7: add_array: Assertion `a != NULL&#39; failed.
+</pre></div>
+</div>
+<p>Assertion errors will tell us the file and line where the assertion failed. This gives us a lot more
+information than just a <code class="docutils literal notranslate"><span class="pre">Segmentation</span> <span class="pre">fault</span></code> message, and will make the error much easier to debug.</p>
+</div>
+<div class="section" id="logging">
+<h3>Logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h3>
+<p>When debugging a logic error, we often have to trace through the execution of the program with a
+debugger to see whether anything looks “off” (e.g., a variable has a value we did not expect, etc.).
+We can facilitate this process by adding <em>logging statements</em> that provide information on what the
+program is doing. For example, we could add the following statement at the top of the <code class="docutils literal notranslate"><span class="pre">add_array</span></code>
+function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">printf</span><span class="p">(</span><span class="s2">&quot;Adding up array with </span><span class="si">%i</span><span class="s2"> elements.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that we wouldn’t add this in reaction to an error: we would add it from the get-go,
+because the information included in the log message could be useful if we do have to debug
+the program. In particular, it would allow us to immediately <em>verify</em> whether the function is
+receiving the expected inputs (if not, that would give us a clue on where to narrow our search)</p>
+<p>Note that while you can implement basic logging with printf statements, there are also logging
+libraries that allow you to control the level of logging (so that you can run your program without
+logging when you are not debugging it). For C, we could use something like this: <a class="reference external" href="https://github.com/rxi/log.c">https://github.com/rxi/log.c</a></p>
+</div>
+<div class="section" id="unit-tests">
+<h3>Unit Tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h3>
+<p>Unit tests are beyond the scope of this guide, but the guide will eventually include
+a discussion of <a class="reference external" href="https://en.wikipedia.org/wiki/Software_regression">regression bugs</a></p>
+</div>
+</div>
+<div class="section" id="asking-for-help">
+<h2>Asking for Help<a class="headerlink" href="#asking-for-help" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes, you will get completely stumped when trying to debug an issue, and will need
+to ask someone for help. Ideally, you will be able to sit down with someone and walk
+through the issue with them, to see if they can spot something you missed. However,
+it is very common to have to ask for help through a discussion forum, a chat, etc.
+In that case, it will be more challenging for someone to provide assistance because
+they can’t see <em>exactly</em> what you’re seeing, nor can they interactively debug
+the issue with you.</p>
+<p>Below we have compiled a list of guidelines and tips on how to ask effective questions:</p>
+<ul class="simple">
+<li>Make sure you’re asking an actual question. You need to describe a specific issue
+you’re encountering, and <em>why</em> you’re stuck on it (e.g., you are not getting the
+expected result, the tests are failing in a way you do not understand, etc.).
+Writing a post that says “I can’t get this test to work, I’ve pushed my code.
+Please look at it.” is not a question!</li>
+<li>It will be much easier for someone to help you if they are able to <strong>reproduce</strong> the
+<strong>exact</strong> issue you are encountering (i.e., when they run your code, they must be able
+to observe the exact same issue you’re encountering). You usually want to make sure
+you do the following:<ul>
+<li>If your code lives in a repository, make sure you push your latest code to that
+repository. If the person helping you can’t see your code, they won’t be able
+to run it and reproduce the error.</li>
+<li>Include a <em>detailed</em> description of the <em>exact</em> chain of events that leads to
+the issue you’re encountering. This includes providing the <em>exact</em> commands you
+are using to compile your code and run it, even if they seem completely foolproof
+to you (remember Rule of Thumb #5: Assume nothing!)</li>
+<li>If something is “wrong”, describe in what way it seems wrong to you.
+For example, were you expecting a particular output but got a different one?
+If a piece of code behaving in a way you were not expecting? etc. It can be useful
+explain what you were expecting the code to do, and what you encountered instead.</li>
+<li>Provide information on where you are running the code. In some cases, a bug will
+manifest itself on one operating system, but not in another. If you don’t specify
+where you’re encountering the bug, the person helping you may run it in an environment
+that does not reproduce the bug, and may just reply “works for me”.</li>
+</ul>
+</li>
+<li>If you encounter an error message (or any other unexpected output), please make sure you
+include the <strong>full and unabridged</strong> error message (or unexpected output). While you may
+think you’re being helpful by providing only the portion of the error message that
+is relevant, this also means the person helping you has less information to be able
+to help you with. Summarizing the message (e.g., “The test says something about an
+unexpected sequence number”) is similarly unhelpful. In general, the more information
+you provide, the easier it will be for us to help you.</li>
+<li>Don’t post screenshots of the output. Screenshots are not searchable and not copy-pasteable.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The Debugging Guide</a><ul>
+<li><a class="reference internal" href="#types-of-programming-errors">Types of Programming Errors</a><ul>
+<li><a class="reference internal" href="#compiler-linker-errors">Compiler/Linker Errors</a></li>
+<li><a class="reference internal" href="#runtime-errors">Runtime Errors</a></li>
+<li><a class="reference internal" href="#logic-errors">Logic errors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#debugging-techniques">Debugging Techniques</a><ul>
+<li><a class="reference internal" href="#printf-debugging">printf debugging</a></li>
+<li><a class="reference internal" href="#using-a-debugger">Using a debugger</a></li>
+<li><a class="reference internal" href="#assertions">Assertions</a></li>
+<li><a class="reference internal" href="#logging">Logging</a></li>
+<li><a class="reference internal" href="#unit-tests">Unit Tests</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#asking-for-help">Asking for Help</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Borja Sotomayor.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
