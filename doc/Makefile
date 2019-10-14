@@ -18,3 +18,8 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+deploy:
+	git --work-tree=$(BUILDDIR)/html/ --git-dir=$(BUILDDIR)/html/.git add -A .
+	git --work-tree=$(BUILDDIR)/html/ --git-dir=$(BUILDDIR)/html/.git commit -m"Updated website"
+	git push origin gh-pages
