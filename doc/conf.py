@@ -20,13 +20,13 @@
 # -- Project information -----------------------------------------------------
 
 project = 'The Debugging Guide'
-copyright = '2018, Borja Sotomayor'
+copyright = '2018-2019, Borja Sotomayor'
 author = 'Borja Sotomayor'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '0.2'
 
 
 # -- General configuration ---------------------------------------------------
