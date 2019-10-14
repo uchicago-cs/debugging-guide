@@ -1,5 +1,9 @@
 The Debugging Guide
-===================
+*******************
+
+.. contents::
+   :local:
+   :backlinks: none
 
 Even the most seasoned programmer makes mistakes, so implementing software will 
 always involve some amount of *debugging*: finding and fixing errors in your code. 
@@ -27,9 +31,11 @@ In this guide, we are going to cover the following:
   and will need to ask a more expert programmer for help. However, you will need to
   provide that person with enough information for them to help you.
 
-We will use C examples and the GDB debugger to explain some of these concepts. 
-Readers are assumed to be familiar with how to use GCC from the command-line, as
-well as the compiling and linking in general. No prior knowledge of GDB is assumed. 
+We will use C and Python examples to explain some of these concepts. 
+Readers with a C background are assumed to be familiar with how to use GCC from the command-line, as
+well as the compiling and linking in general. Readers with a Python background
+are assumed to know how to run Python code from a terminal, or from
+inside the Python interpreter.
 
 The examples can be found in the ``examples`` directory of our GitHub 
 repository: https://github.com/uchicago-cs/debugging-guide
@@ -38,56 +44,98 @@ This guide was originally written for `CMSC 22000 Introduction to Software Devel
 at the University of Chicago.
 
 Types of Programming Errors
----------------------------
+===========================
 
 We can classify programming errors into three general categories:
 
-* **Compiler/Linker errors**: Errors that prevent your code from compiling/linking in 
-  the first place. These are often syntax errors, but may include other types of 
-  errors (e.g., undefined references when linking)
+* **Build errors**: Errors that happen when your code is being built (either by
+  an interpreter or a compiler). In other words, these are errors that prevent 
+  your code from even running. These are often syntax errors, but may include other types of 
+  errors (e.g., undefined references when linking C programs)
 
-* **Runtime errors**: Errors that make your program crash in some way.
+* **Runtime errors**: Errors that happen when your code runs, but which make 
+  your program crash in some way.
 
 * **Logic errors**: Errors that don’t make your program crash, but result in 
   incorrect behavior.
 
-Compiler/Linker Errors
-~~~~~~~~~~~~~~~~~~~~~~
+Build Errors
+------------
 
-Compiler/Linker errors occur when we try to build our program, and are unable to do 
-so because of an issue in our code (this means we can't even run our code)
+Build errors occur when we try to build our code (either with a compiler,
+or on-the-fly with an interpreter), and are unable to do 
+so because of an issue in our code (this means we can't even run our code).
 
-This type of error is, arguably, the easiest to fix, because modern compilers will 
-often tell us exactly what is wrong in our code (down to the line where the error
-was detected). However, interpreting these error messages can sometimes be challenging
+Syntax errors
+~~~~~~~~~~~~~
 
-In the ``examples/compile-error`` directory, try compiling ``compile-error.c``::
+A syntax error occurs when we write code that doesn't conform to the programming
+language's specification. This type of error is, arguably, the easiest to fix, because 
+modern interpreters/compilers will often tell us exactly what is wrong in our code 
+(down to the line where the error was detected). However, interpreting these error 
+messages can sometimes be challenging.
 
-    gcc compile-error.c -o compile-error
+.. tabs::
 
-It should produce the following error::
+   .. tab:: C
 
-    compile-error.c: In function 'main':
-    compile-error.c:7:5: error: expected ';' before 'return'
-         return 0;
-         ^
+      In the ``examples/syntax-error`` directory, try compiling ``syntax-error.c``::
 
-This is a **compiler error** and it seems pretty helpful: it is telling us the file, 
-function, and line (7) where the error is detected. It’s even telling us the *character* 
-in that line that triggered the error (the fifth character).
+          gcc syntax-error.c -o syntax-error
 
-However, if we look at the code, we can see that the error actually originates in line 5::
+      It should produce the following error::
 
-    printf("Hello, world!")
+          syntax-error.c: In function 'main':
+          syntax-error.c:7:5: error: expected ';' before 'return'
+               return 0;
+               ^
 
-The line is missing a semicolon at the end, but this issue is not detected until line 7 
-(when the compiler encounters a "return" statement when it expected a semicolon)
+      This message seems pretty helpful: it is telling us the file, 
+      function, and line (7) where the error is detected. It’s even telling us the *character* 
+      in that line that triggered the error (the fifth character).
+
+      However, if we look at the code, we can see that the error actually originates in line 5::
+
+          printf("Hello, world!")
+
+      The line is missing a semicolon at the end, but this issue is not detected until line 7 
+      (when the compiler encounters a "return" statement when it expected a semicolon)
+
+   .. tab:: Python
+
+      In the ``examples/syntax-error`` directory, try running ``syntax-error.py``::
+
+          python3 syntax-error.py
+
+      It should produce the following error::
+
+          File "syntax-error.py", line 5
+            elif a < 0:
+               ^
+        SyntaxError: invalid syntax
+
+      Python helpfully tells us this is a syntax error, and even tells us the file 
+      and line (5) where the error is detected. 
+
+      However, if we look at the code, we can see that the error actually originates in line 4::
+
+          print("The number is positive"
+
+      The line is missing a closing parentheses at the end, but this issue is not detected until line 5 
+      (when the interpreter encounters an ``elif`` when it expected a parentheses)
+
 
 .. admonition:: Debugging Rule of Thumb #1
 
-   When a compiler gives you a line number, it doesn’t necessarily mean that line is incorrect 
+   When an interpreter/compiler gives you a line number, it doesn’t necessarily mean that line is incorrect 
    (and that is has to be fixed). Always look at the offending lines *and* the lines before 
    it to see if you can spot the issue.
+
+
+Linker errors
+~~~~~~~~~~~~~
+
+*This section is only applicable to C programming. If you are using Python, skip to* :ref:`runtime-errors`
 
 In the ``examples/link-error/`` directory, try doing this::
 
@@ -98,6 +146,7 @@ It should produce the following error::
     /tmp/ccyLGeRy.o: In function `main':
     main.c:(.text+0x14): undefined reference to `bye'
     collect2: error: ld returned 1 exit status
+
 
 This is a **linker error**, not a compiler error. Remember what’s happening behind the scenes:
 
@@ -149,6 +198,12 @@ happens). You should get into the habit of always using the ``-g`` flag, except 
 version of your program (the ``-g`` flag increases the size of your object files, and is unnecessary 
 once the software is in production).
 
+Spurious build errors
+~~~~~~~~~~~~~~~~~~~~~
+
+*This section is only applicable to C programming. If you are using Python, skip to
+Runtime Errors*
+
 Let's look at another example. In the ``examples/spurious`` directory, try doing this::
 
     gcc spurious.c -o spurious
@@ -190,78 +245,130 @@ silly typo like this (forgetting a ``*``) is not uncommon and, in a much larger 
 can be hard to track down the issue just by code inspection (unless you heed the compiler's 
 warnings to focus your search).
 
+.. _runtime-errors:
+
 Runtime Errors
-~~~~~~~~~~~~~~
+--------------
 
-Runtime errors are errors that make a program crash while it is running. In C, this often results
-in a "Segmentation fault" (or "segfault") resulting from your program trying to access regions of 
-memory it shouldn’t access. This error is actually triggered by the operating system itself: when 
-it detects that you’re trying to access an illegal memory address, it will simply kill your program 
-and, at least in C, this results in a single very unhelpful error message: "Segmentation fault".
+Runtime errors are errors that make a program crash while it is running. 
 
-In other programming languages, like Java or Python, runtime errors may provide more helpful error 
-messages, typically telling you the exact place where the error happened. For example, in the 
-``examples/runtime/`` directory we have two implementations of the same program in C and Python. This 
-program takes two integers as command-line parameters and divides them::
+.. tabs::
 
-    $ gcc runtime-error.c -o runtime-error
-    $ ./runtime-error 10 2
-    a / b = 5
-    $ python3 runtime-error.py 10 2
-    a / b = 5
+   .. tab:: C
 
-However, if we try dividing by zero (which will also make a program crash), the level of detail 
-in the errors is much different::
+        For example, in the ``examples/runtime/`` directory we have a simple program that takes 
+        two integers as command-line parameters and divides them::
 
-    $ ./runtime-error 10 0
-    Floating point exception
-    $ python3 runtime-error.py 10 0
-    Traceback (most recent call last):
-      File "runtime-error.py", line 19, in <module>
-        x = bar(a, b)
-      File "runtime-error.py", line 9, in bar
-        return foo(a, b)
-      File "runtime-error.py", line 6, in foo
-        return a // b
-    ZeroDivisionError: integer division or modulo by zero
+            $ gcc runtime-error.c -o runtime-error
+            $ ./runtime-error 10 2
+            a / b = 5
 
-As we’ll see later on, we will have to use a debugger (like GDB) to track down the origin of the 
-error in C but, ultimately, it is generally possible to track down the origin of runtime errors 
-down to the exact line that triggers them (some languages, like Python and Java, will give us 
-that information right away; others will require using a debugger as an additional step).
+        However, if we try dividing by zero (which will also make the program crash), we
+        get a descriptive error (a ``Floating point exception`` has happened), but no hints 
+        as to what part of our code triggered that error::
+
+            $ ./runtime-error 10 0
+            Floating point exception
+
+        Another common type of runtime error is a "Segmentation fault" (or "segfault"), 
+        resulting from your program trying to access regions of 
+        memory it shouldn’t access. This error is actually triggered by the operating system itself: when 
+        it detects that you’re trying to access an illegal memory address, it will simply kill your program 
+        and, at least in C, this results in a single very unhelpful error message: "Segmentation fault".
+
+        As we’ll see later on, we will have to use a debugger (like GDB) to track down the origin of the 
+        error in C but, ultimately, it is generally possible to track down the origin of runtime errors 
+        down to the exact line that triggers them.
+
+   .. tab:: Python
+
+        In Python runtime errors typically happen as the result of an uncaught exception. For example, 
+        in the ``examples/runtime/`` directory we have a simple program that takes 
+        two integers as command-line parameters and divides them::
+
+            $ python3 runtime-error.py 10 2
+            a / b = 5
+
+        However, if we try dividing by zero, our program will crash::
+
+            $ python3 runtime-error.py 10 0
+            Traceback (most recent call last):
+              File "runtime-error.py", line 19, in <module>
+                x = bar(a, b)
+              File "runtime-error.py", line 9, in bar
+                return foo(a, b)
+              File "runtime-error.py", line 6, in foo
+                return a // b
+            ZeroDivisionError: integer division or modulo by zero
+
+        Python helpfully provides us with a *stack trace*, telling us the exact sequence of function
+        calls that resulted in this exception. **Debugging Rule of Thumb #1** still applies here:
+        while the exception was raised in line 6 (in function ``foo``), that doesn't necessarily
+        mean that we have to fix that line specifically. In this case, we could validate our
+        inputs in the main portion of the program (before the call to function ``bar``) to ensure
+        that division by zero from ever happening.
 
 Logic errors
-~~~~~~~~~~~~
+------------
 
 When your program compiles and runs (without crashes) but exhibits incorrect behavior, that is 
-known as a logic error (i.e., there is an error in the "logic" of your program). For example, 
-let’s look at ``distance.c`` in the ``examples/logic/`` directory. It takes four command-line 
-parameters X1 Y1 X2 Y2 representing two points in 2-dimensional space, and computes the distance 
-between them::
+known as a logic error (i.e., there is an error in the "logic" of your program). 
 
-    $ gcc distance.c -o distance -lm
-    $ ./distance 0 0 1 0
-    The distance from (0.00, 0.00) to (1.00, 0.00) is 1.00
-    $ ./distance 0 0 3 4
-    The distance from (0.00, 0.00) to (3.00, 4.00) is 5.00
+.. tabs::
 
-This looks like this program is working fine. However, if we try a few other values, we get 
-incorrect distances::
+   .. tab:: C
 
-    $ ./distance -1 0 1 0
-    The distance from (-1.00, 0.00) to (1.00, 0.00) is 0.00
-    $ ./distance -1 -1 2 3
-    The distance from (-1.00, -1.00) to (2.00, 3.00) is 2.24
+        For example, 
+        let’s look at ``distance.c`` in the ``examples/logic/`` directory. It takes four command-line 
+        parameters X1 Y1 X2 Y2 representing two points in 2-dimensional space, and computes the distance 
+        between them::
 
-The correct distances are 2 and 5, respectively.
+            $ gcc distance.c -o distance -lm
+            $ ./distance 0 0 1 0
+            The distance from (0.00, 0.00) to (1.00, 0.00) is 1.00
+            $ ./distance 0 0 3 4
+            The distance from (0.00, 0.00) to (3.00, 4.00) is 5.00
 
-Logic errors are probably the hardest errors to debug, because, unlike compiler and runtime errors, 
-we are not given a specific line to look at. This is specially true when the program exhibits correct 
-behaviour in some cases but not in others. As we'll describe soon, we have to be specially methodic 
+        This looks like this program is working fine. However, if we try a few other values, we get 
+        incorrect distances::
+
+            $ ./distance -1 0 1 0
+            The distance from (-1.00, 0.00) to (1.00, 0.00) is 0.00
+            $ ./distance -1 -1 2 3
+            The distance from (-1.00, -1.00) to (2.00, 3.00) is 2.24
+
+        The correct distances are 2 and 5, respectively. Can you spot what is wrong with the code?
+
+   .. tab:: Python
+
+        For example, 
+        let’s look at ``distance.py`` in the ``examples/logic/`` directory. It takes four command-line 
+        parameters X1 Y1 X2 Y2 representing two points in 2-dimensional space, and computes the distance 
+        between them::
+
+            $ python3 distance.py 0 0 1 0
+            The distance from (0.00, 0.00) to (1.00, 0.00) is 1.00
+            $ python3 distance.py 0 0 3 4
+            The distance from (0.00, 0.00) to (3.00, 4.00) is 5.00
+
+        This looks like this program is working fine. However, if we try a few other values, we get 
+        incorrect distances::
+
+            $ python3 distance.py -1 0 1 0
+            The distance from (-1.00, 0.00) to (1.00, 0.00) is 0.00
+            $ python3 distance.py -1 -1 2 3
+            The distance from (-1.00, -1.00) to (2.00, 3.00) is 2.24
+
+        The correct distances are 2 and 5, respectively. Can you spot what is wrong with the code?
+
+Logic errors are probably the hardest errors to debug, because, unlike build and runtime errors,
+our code actually runs without crashing or producing any noticeable error. However, the *behaviour*
+of the code is incorrect (and, in many cases, the program will work correctly in some cases but not
+in others, like the distance example above). As we'll describe soon, we have to be specially methodic 
 to track down these kind of errors.
 
 Debugging Techniques
---------------------
+====================
 
 Not all errors are debugged in the same way, and we need to make sure we use the right strategy for 
 the right error.
@@ -269,35 +376,35 @@ the right error.
 Most debugging is *reactive*: an error happens, and we try to find the cause of that error so we can fix it. 
 Debugging is said to be like investigating a murder where you are both the detective and the murderer.
 
-Solving compiler/linker errors can generally be done by applying the rules of thumb 1-3 we have already described.
+Solving build errors can generally be done by applying the rules of thumb 1-3 we have already described.
 
-Solving runtime errors can usually be done by using a debugger, which can provide additional information 
+Solving runtime errors in C can usually be done by using a debugger, which can provide additional information 
 about the error. In the case of segfaults, it can tell you the exact line where the segfault is happening.
-
-.. note:: 
-
-   The guide currently does not include specific instructions on how to use a debugger to do this. In the interim,
-   you may want to take a look at the `Debugging Lab <https://uchicago-cs.github.io/cmsc22000/labs/lab4/>`_ 
-   from CMSC 22000 (the class this guide was written for).
+Solving runtime errors in Python usually involves interpreting the stack trace we are given to figure
+out the root cause of the error.
 
 Solving logic errors is trickier (as we saw earlier, we don’t get clues on where the error may be located).
 
 .. admonition:: Debugging Rule of Thumb #4
 
-   When debugging an error (but specially a logic error). Narrow down your search as much as possible. 
+   When debugging an error (but specially a logic error), narrow down your search as much as possible. 
    Start by focusing on the likely source of the error, and then refine your search using the techniques 
    described below. Don’t waste your time looking through the parts of the code that actually work.
 
 Below we describe a number of debugging techniques that can be used to narrow down the origin of runtime
-and logic errors. The first two, printf debugging and using a debugger, are *reactive* techniques: we
+and logic errors. The first two, print debugging and using a debugger, are *reactive* techniques: we
 use them when a bug manifests itself. The remaining ones are *preemptive*: they involve writing code 
 that doesn’t impact the functionality of our program, but which either helps us catch bugs sooner, 
 or makes it easier for us to debug our program when bugs do surface.
 
-printf debugging
-~~~~~~~~~~~~~~~~
+Reactive techniques
+-------------------
 
-We add printf statements in our code to print out the values of variables (or, more generally, to get a 
+print debugging
+~~~~~~~~~~~~~~~
+
+We add print statements in our code (``printf`` in C and ``print`` in Python) to print out the values of variables 
+(or, more generally, to get a 
 better sense of the state of the running program) and re-run the program. Sometimes, seeing those values 
 will help us to immediately realize what the problem is (specially when a variable has a value we did not expect)
 
@@ -321,12 +428,24 @@ Using a debugger
 "print debugging" is an easy technique that sometimes yields immediate results. However, it is a 
 tedious technique if you’re dealing with an insidious bug that requires tracing through several 
 functions, variables, etc. to find the issue. If you find yourself writing more than ten printf 
-statements, that’s a sign you may need to switch to using a debugger.
+statements, that’s a sign you may need to switch to using a `debugger <https://en.wikipedia.org/wiki/Debugger>`__.
 
-A debugger (like GDB) provides you with powerful tools to trace the execution of your program, 
-and to observe the evolution of its state (e.g., the values of all the variables) as the program 
-runs. In a sense, this is not that different from printf debugging, except you get to "print" 
-every single variable at every single line of code.
+A debugger allows you to trace the execution of your program,  and to observe the evolution of its state 
+(e.g., the values of all the variables) as the program runs. In a sense, this is not that different from
+print debugging, except you get to automatically "print" every single variable at every single line of code.
+
+Modern development environments, like Eclipse, PyCharm, CLion, etc. include built-in debuggers,
+and there are also command-line debuggers like `GDB <https://www.gnu.org/software/gdb/>`__ for C code and 
+`pdb <https://docs.python.org/3/library/pdb.html>`__ for Python.
+
+.. note:: 
+
+   This guide currently does not include specific instructions on how to use a debugger. For tracking
+   down C runtime errors, we recommend looking at the `Debugging Lab <https://uchicago-cs.github.io/cmsc22000/labs/lab4/>`_ 
+   from CMSC 22000 (the class this guide was originally written for).
+
+Preemptive techniques
+---------------------
 
 Assertions
 ~~~~~~~~~~
@@ -335,22 +454,69 @@ Most modern programming languages include the ability to add *assertions* in our
 is a boolean condition which, if false, will make our program exit immediately, with a helpful message
 telling us what boolean condition failed.
 
-For example, see the ``array.c`` file in ``examples/assertions/``. It includes an ``add_array``
-function that includes an assertion::
+.. tabs::
 
-    int add_array(int *a, int length)
-    {
-        assert(a != NULL);
+   .. tab:: C
 
-If we were to call ``add_array`` with a NULL pointer, our code would crash. This would result in a segfault 
-and, as we saw previously, we would likely be able to trace the exact cause of the error, but it would
-mean firing up a debugger, etc. With an assertion, on the other hand, the same situation will result 
-in the program crashing with an error message like this::
+        For example, see the ``array.c`` file in ``examples/assertions/``. It includes an ``add_array``
+        function that includes an assertion::
 
-    array: array.c:7: add_array: Assertion `a != NULL' failed.
+            int add_array(int *a, int length)
+            {
+                assert(a != NULL);
 
-Assertion errors will tell us the file and line where the assertion failed. This gives us a lot more 
-information than just a ``Segmentation fault`` message, and will make the error much easier to debug.
+        If we were to call ``add_array`` with a NULL pointer, our code would crash. This would result in a segfault 
+        and, as we saw previously, we would likely be able to trace the exact cause of the error, but it would
+        mean firing up a debugger, etc. With an assertion, on the other hand, the same situation will result 
+        in the program crashing with an error message like this::
+
+            array: array.c:7: add_array: Assertion `a != NULL' failed.
+
+        Assertion errors will tell us the file and line where the assertion failed. This gives us a lot more 
+        information than just a ``Segmentation fault`` message, and will make the error much easier to debug.
+
+   .. tab:: Python
+
+        For example, see the ``inventory.py`` file in ``examples/assertions/``. In this simple program,
+        we have an ``inv`` dictionary to keep track of an inventory (mapping item names to their
+        quantity), and a simple ``update_inventory`` function that updates the number of items in the inventory::
+        
+            def update_inventory(inv, item, quantity):
+                inv[item] = quantity
+            
+        In the program, we update the inventory with a few items, and then count up the total number
+        of items. However, if we mistakenly set the quantity of an item to a negative value, our
+        program will still run but will produce an incorrect result (again, these kinds of errors
+        can be hard to track down, because our program isn't crashing or giving an error message;
+        it's simply behaving incorrectly). So, we want to make sure that 
+        ``update_inventory`` is never called with a negative value for ``quantity``, so we add an
+        assertion to check for this::
+        
+            def update_inventory(inv, item, quantity):
+                assert quantity >= 0, "Cannot update inventory with a negative quantity"
+
+                inv[item] = quantity
+                
+        The assertion specifies a condition (``quantity >=0``) and a descriptive message.
+        If we call the function with a negative quantity, we will get a stack trace
+        that tells us exactly what is wrong::
+        
+            Traceback (most recent call last):
+              File "inventory.py", line 16, in <module>
+                update_inventory(inv, "Screws", -100)
+              File "inventory.py", line 5, in update_inventory
+                assert quantity >= 0, "Cannot update inventory with a negative quantity"
+            AssertionError: Cannot update inventory with a negative quantity
+            
+        So, if we inadvertently call the function with an incorrect value, our program will
+        be much easier to debug.
+        
+Of course, these are simple examples where you could've figured out the issue just by code
+inspection. However, in much larger programs, where a misbehaving function could cause
+a series of baffling spurious errors somewhere else in our program, these kind of logic
+errors can be much harder to track down. Assertions can help us detect these problems
+right away, instead of doing print debugging or using a debugger to track down the 
+origin of the problem.
 
 Logging
 ~~~~~~~
@@ -358,29 +524,64 @@ Logging
 When debugging a logic error, we often have to trace through the execution of the program with a 
 debugger to see whether anything looks "off" (e.g., a variable has a value we did not expect, etc.). 
 We can facilitate this process by adding *logging statements* that provide information on what the 
-program is doing. For example, we could add the following statement at the top of the ``add_array``
-function::
+program is doing. 
 
-    printf("Adding up array with %i elements.\n", length)
+.. tabs::
+
+   .. tab:: C
+
+        For example, we could add the following statement at the top of the ``add_array``
+        function::
+
+            printf("Adding up array with %i elements.\n", length)
+
+   .. tab:: Python
+
+        For example, we could add the following statement at the top of the ``update_inventory``
+        function::
+        
+            print("Updating inventory: Quantity of '{}' set to {}".format(item, quantity))
 
 Note that we wouldn’t add this in reaction to an error: we would add it from the get-go, 
 because the information included in the log message could be useful if we do have to debug 
 the program. In particular, it would allow us to immediately *verify* whether the function is 
 receiving the expected inputs (if not, that would give us a clue on where to narrow our search)
 
-Note that while you can implement basic logging with printf statements, there are also logging 
-libraries that allow you to control the level of logging (so that you can run your program without 
-logging when you are not debugging it). For C, we could use something like this: https://github.com/rxi/log.c
+In a way, you can think of this as preemptive print debugging. It does have one big drawback,
+though: now our program's output will be filled with this kind of debugging information,
+which we may not always want to print. When adding logging statements to a program, it is more
+common to use a *logging library*, which will allow you to control the level of logging 
+(so that you can run your program without logging when you are not debugging it). 
+For C, we could use the `log.c library <https://github.com/rxi/log.c>`__. For Python,
+we could use Python's built-in `logging library <https://docs.python.org/3/howto/logging.html>`__
 
 Unit Tests
 ~~~~~~~~~~
 
-Unit tests are beyond the scope of this guide, but the guide will eventually include
-a discussion of `regression bugs <https://en.wikipedia.org/wiki/Software_regression>`_
+How to write unit tests is beyond the scope of this guide but, assuming that your
+code already has unit tests associated with it, there is a rule of thumb you should observe
+whenever the tests fail:
+
+.. admonition:: Debugging Rule of Thumb #6
+
+   When your code fails multiple tests, pick the simplest test that is failing,
+   and fix your code to make that test pass.
+
+   Once you update your code, re-run the tests. If you pass that test, but still fail others, repeat
+   this same process: pick the simplest test that is failing, and focus on
+   just that test.
+
+   The reason for this is similar to **Debugging Rule of Thumb #2**: having
+   your code fail lots of tests may seem overwhelming, but it is possible that
+   many of the failures are *spurious* (errors that result 
+   from a previous error). Sometimes, fixing your code to pass
+   the simplest test will suddenly make a whole bunch of other tests pass as well.
+   So, it is important that you focus on fixing your code one test at a time.
+
 
 
 Asking for Help
----------------
+===============
 
 Sometimes, you will get completely stumped when trying to debug an issue, and will need 
 to ask someone for help. Ideally, you will be able to sit down with someone and walk
