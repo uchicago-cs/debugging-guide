@@ -135,8 +135,7 @@ messages can sometimes be challenging.
 Linker errors
 ~~~~~~~~~~~~~
 
-*This section is only applicable to C programming. If you are using Python, skip to
-Runtime Errors*
+*This section is only applicable to C programming. If you are using Python, skip to* :ref:`runtime-errors`
 
 In the ``examples/link-error/`` directory, try doing this::
 
@@ -245,6 +244,8 @@ If we fix this, our program will compile and run correctly.
 silly typo like this (forgetting a ``*``) is not uncommon and, in a much larger codebase, it 
 can be hard to track down the issue just by code inspection (unless you heed the compiler's 
 warnings to focus your search).
+
+.. _runtime-errors:
 
 Runtime Errors
 --------------
@@ -386,7 +387,7 @@ Solving logic errors is trickier (as we saw earlier, we don’t get clues on whe
 
 .. admonition:: Debugging Rule of Thumb #4
 
-   When debugging an error (but specially a logic error). Narrow down your search as much as possible. 
+   When debugging an error (but specially a logic error), narrow down your search as much as possible. 
    Start by focusing on the likely source of the error, and then refine your search using the techniques 
    described below. Don’t waste your time looking through the parts of the code that actually work.
 
@@ -476,7 +477,46 @@ telling us what boolean condition failed.
 
    .. tab:: Python
 
-        TODO
+        For example, see the ``inventory.py`` file in ``examples/assertions/``. In this simple program,
+        we have an ``inv`` dictionary to keep track of an inventory (mapping item names to their
+        quantity), and a simple ``update_inventory`` function that updates the number of items in the inventory::
+        
+            def update_inventory(inv, item, quantity):
+                inv[item] = quantity
+            
+        In the program, we update the inventory with a few items, and then count up the total number
+        of items. However, if we mistakenly set the quantity of an item to a negative value, our
+        program will still run but will produce an incorrect result (again, these kinds of errors
+        can be hard to track down, because our program isn't crashing or giving an error message;
+        it's simply behaving incorrectly). So, we want to make sure that 
+        ``update_inventory`` is never called with a negative value for ``quantity``, so we add an
+        assertion to check for this::
+        
+            def update_inventory(inv, item, quantity):
+                assert quantity >= 0, "Cannot update inventory with a negative quantity"
+
+                inv[item] = quantity
+                
+        The assertion specifies a condition (``quantity >=0``) and a descriptive message.
+        If we call the function with a negative quantity, we will get a stack trace
+        that tells us exactly what is wrong::
+        
+            Traceback (most recent call last):
+              File "inventory.py", line 16, in <module>
+                update_inventory(inv, "Screws", -100)
+              File "inventory.py", line 5, in update_inventory
+                assert quantity >= 0, "Cannot update inventory with a negative quantity"
+            AssertionError: Cannot update inventory with a negative quantity
+            
+        So, if we inadvertently call the function with an incorrect value, our program will
+        be much easier to debug.
+        
+Of course, these are simple examples where you could've figured out the issue just by code
+inspection. However, in much larger programs, where a misbehaving function could cause
+a series of baffling spurious errors somewhere else in our program, these kind of logic
+errors can be much harder to track down. Assertions can help us detect these problems
+right away, instead of doing print debugging or using a debugger to track down the 
+origin of the problem.
 
 Logging
 ~~~~~~~
@@ -497,16 +537,23 @@ program is doing.
 
    .. tab:: Python
 
-        TODO
+        For example, we could add the following statement at the top of the ``update_inventory``
+        function::
+        
+            print("Updating inventory: Quantity of '{}' set to {}".format(item, quantity))
 
 Note that we wouldn’t add this in reaction to an error: we would add it from the get-go, 
 because the information included in the log message could be useful if we do have to debug 
 the program. In particular, it would allow us to immediately *verify* whether the function is 
 receiving the expected inputs (if not, that would give us a clue on where to narrow our search)
 
-Note that while you can implement basic logging with print statements, there are also logging 
-libraries that allow you to control the level of logging (so that you can run your program without 
-logging when you are not debugging it). For C, we could use something like this: https://github.com/rxi/log.c
+In a way, you can think of this as preemptive print debugging. It does have one big drawback,
+though: now our program's output will be filled with this kind of debugging information,
+which we may not always want to print. When adding logging statements to a program, it is more
+common to use a *logging library*, which will allow you to control the level of logging 
+(so that you can run your program without logging when you are not debugging it). 
+For C, we could use the `log.c library <https://github.com/rxi/log.c>`__. For Python,
+we could use Python's built-in `logging library <https://docs.python.org/3/howto/logging.html>`__
 
 Unit Tests
 ~~~~~~~~~~
