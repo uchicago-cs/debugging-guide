@@ -1,25 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Debugging Guide &#8212; The Debugging Guide 0.2 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx_tabs/semantic-ui-2.4.1/segment.min.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx_tabs/semantic-ui-2.4.1/menu.min.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx_tabs/tabs.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.js"></script>
-    <script type="text/javascript" src="_static/sphinx_tabs/tabs.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/tabs.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -33,38 +27,45 @@
 
     <div class="document">
       <div class="documentwrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="the-debugging-guide">
 <h1>The Debugging Guide<a class="headerlink" href="#the-debugging-guide" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#types-of-programming-errors" id="id2">Types of Programming Errors</a><ul>
-<li><a class="reference internal" href="#build-errors" id="id3">Build Errors</a><ul>
-<li><a class="reference internal" href="#syntax-errors" id="id4">Syntax errors</a></li>
-<li><a class="reference internal" href="#linker-errors" id="id5">Linker errors</a></li>
-<li><a class="reference internal" href="#spurious-build-errors" id="id6">Spurious build errors</a></li>
+<li><p><a class="reference internal" href="#types-of-programming-errors" id="id2">Types of Programming Errors</a></p>
+<ul>
+<li><p><a class="reference internal" href="#build-errors" id="id3">Build Errors</a></p>
+<ul>
+<li><p><a class="reference internal" href="#syntax-errors" id="id4">Syntax errors</a></p></li>
+<li><p><a class="reference internal" href="#linker-errors" id="id5">Linker errors</a></p></li>
+<li><p><a class="reference internal" href="#spurious-build-errors" id="id6">Spurious build errors</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#runtime-errors" id="id7">Runtime Errors</a></li>
-<li><a class="reference internal" href="#logic-errors" id="id8">Logic errors</a></li>
+<li><p><a class="reference internal" href="#runtime-errors" id="id7">Runtime Errors</a></p></li>
+<li><p><a class="reference internal" href="#logic-errors" id="id8">Logic errors</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#debugging-techniques" id="id9">Debugging Techniques</a><ul>
-<li><a class="reference internal" href="#reactive-techniques" id="id10">Reactive techniques</a><ul>
-<li><a class="reference internal" href="#print-debugging" id="id11">print debugging</a></li>
-<li><a class="reference internal" href="#using-a-debugger" id="id12">Using a debugger</a></li>
+<li><p><a class="reference internal" href="#debugging-techniques" id="id9">Debugging Techniques</a></p>
+<ul>
+<li><p><a class="reference internal" href="#reactive-techniques" id="id10">Reactive techniques</a></p>
+<ul>
+<li><p><a class="reference internal" href="#print-debugging" id="id11">print debugging</a></p></li>
+<li><p><a class="reference internal" href="#using-a-debugger" id="id12">Using a debugger</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#preemptive-techniques" id="id13">Preemptive techniques</a><ul>
-<li><a class="reference internal" href="#assertions" id="id14">Assertions</a></li>
-<li><a class="reference internal" href="#logging" id="id15">Logging</a></li>
-<li><a class="reference internal" href="#unit-tests" id="id16">Unit Tests</a></li>
+<li><p><a class="reference internal" href="#preemptive-techniques" id="id13">Preemptive techniques</a></p>
+<ul>
+<li><p><a class="reference internal" href="#assertions" id="id14">Assertions</a></p></li>
+<li><p><a class="reference internal" href="#logging" id="id15">Logging</a></p></li>
+<li><p><a class="reference internal" href="#unit-tests" id="id16">Unit Tests</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#asking-for-help" id="id17">Asking for Help</a></li>
+<li><p><a class="reference internal" href="#asking-for-help" id="id17">Asking for Help</a></p></li>
 </ul>
 </div>
 <p>Even the most seasoned programmer makes mistakes, so implementing software will
@@ -74,30 +75,28 @@ what is hard is understanding the errors you encounter, and devising a strategy 
 resolve those errors.</p>
 <p>In this guide, we are going to cover the following:</p>
 <ul>
-<li><p class="first"><strong>Common types of programming errors</strong>. When beginner programmers encounter an
+<li><p><strong>Common types of programming errors</strong>. When beginner programmers encounter an
 error (any error) they usually throw their arms in the air and try random changes
 until the bug is fixed (or immediately ask for help). Understanding what type of
 error you’re encountering can help you select a course of action to resolve that
 bug (it is important to understand that not all errors are the same: the best
-course of action for a given error may not be the same for another).</p>
-</li>
-<li><p class="first"><strong>Debugging techniques</strong>. There are a number of different debugging techniques
+course of action for a given error may not be the same for another).</p></li>
+<li><p><strong>Debugging techniques</strong>. There are a number of different debugging techniques
 you can apply to resolve errors in your code.</p>
 <blockquote>
 <div><ul class="simple">
-<li><em>Reactive</em>: Actions you take once a bug happens.</li>
-<li><dl class="first docutils">
-<dt><em>Preemptive</em>: Actions you can take <em>before</em> a bug happens to make that bug</dt>
-<dd>easier to resolve.</dd>
+<li><p><em>Reactive</em>: Actions you take once a bug happens.</p></li>
+<li><dl class="simple">
+<dt><em>Preemptive</em>: Actions you can take <em>before</em> a bug happens to make that bug</dt><dd><p>easier to resolve.</p>
+</dd>
 </dl>
 </li>
 </ul>
 </div></blockquote>
 </li>
-<li><p class="first"><strong>Asking for help</strong>. Sometimes, you will not be able to resolve a bug by yourself,
+<li><p><strong>Asking for help</strong>. Sometimes, you will not be able to resolve a bug by yourself,
 and will need to ask a more expert programmer for help. However, you will need to
-provide that person with enough information for them to help you.</p>
-</li>
+provide that person with enough information for them to help you.</p></li>
 </ul>
 <p>We will use C and Python examples to explain some of these concepts.
 Readers with a C background are assumed to be familiar with how to use GCC from the command-line, as
@@ -112,14 +111,14 @@ at the University of Chicago.</p>
 <h2>Types of Programming Errors<a class="headerlink" href="#types-of-programming-errors" title="Permalink to this headline">¶</a></h2>
 <p>We can classify programming errors into three general categories:</p>
 <ul class="simple">
-<li><strong>Build errors</strong>: Errors that happen when your code is being built (either by
+<li><p><strong>Build errors</strong>: Errors that happen when your code is being built (either by
 an interpreter or a compiler). In other words, these are errors that prevent
 your code from even running. These are often syntax errors, but may include other types of
-errors (e.g., undefined references when linking C programs)</li>
-<li><strong>Runtime errors</strong>: Errors that happen when your code runs, but which make
-your program crash in some way.</li>
-<li><strong>Logic errors</strong>: Errors that don’t make your program crash, but result in
-incorrect behavior.</li>
+errors (e.g., undefined references when linking C programs)</p></li>
+<li><p><strong>Runtime errors</strong>: Errors that happen when your code runs, but which make
+your program crash in some way.</p></li>
+<li><p><strong>Logic errors</strong>: Errors that don’t make your program crash, but result in
+incorrect behavior.</p></li>
 </ul>
 <div class="section" id="build-errors">
 <h3>Build Errors<a class="headerlink" href="#build-errors" title="Permalink to this headline">¶</a></h3>
@@ -134,18 +133,7 @@ modern interpreters/compilers will often tell us exactly what is wrong in our co
 (down to the line where the error was detected). However, interpreting these error
 messages can sometimes be challenging.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-0-0 docutils container">
-<div class="docutils container">
-C</div>
-</div>
-<div class="item sphinx-data-tab-0-1 docutils container">
-<div class="docutils container">
-Python</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment sphinx-data-tab-0-0 active docutils container">
-<p>In the <code class="docutils literal notranslate"><span class="pre">examples/syntax-error</span></code> directory, try compiling <code class="docutils literal notranslate"><span class="pre">syntax-error.c</span></code>:</p>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">C</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><p>In the <code class="docutils literal notranslate"><span class="pre">examples/syntax-error</span></code> directory, try compiling <code class="docutils literal notranslate"><span class="pre">syntax-error.c</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gcc</span> <span class="n">syntax</span><span class="o">-</span><span class="n">error</span><span class="o">.</span><span class="n">c</span> <span class="o">-</span><span class="n">o</span> <span class="n">syntax</span><span class="o">-</span><span class="n">error</span>
 </pre></div>
 </div>
@@ -165,9 +153,7 @@ in that line that triggered the error (the fifth character).</p>
 </div>
 <p>The line is missing a semicolon at the end, but this issue is not detected until line 7
 (when the compiler encounters a “return” statement when it expected a semicolon)</p>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment sphinx-data-tab-0-1 docutils container">
-<p>In the <code class="docutils literal notranslate"><span class="pre">examples/syntax-error</span></code> directory, try running <code class="docutils literal notranslate"><span class="pre">syntax-error.py</span></code>:</p>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><p>In the <code class="docutils literal notranslate"><span class="pre">examples/syntax-error</span></code> directory, try running <code class="docutils literal notranslate"><span class="pre">syntax-error.py</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">syntax</span><span class="o">-</span><span class="n">error</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
@@ -186,11 +172,10 @@ and line (5) where the error is detected.</p>
 </div>
 <p>The line is missing a closing parentheses at the end, but this issue is not detected until line 5
 (when the interpreter encounters an <code class="docutils literal notranslate"><span class="pre">elif</span></code> when it expected a parentheses)</p>
-</div>
-</div>
+</div></div>
 <div class="admonition-debugging-rule-of-thumb-1 admonition">
-<p class="first admonition-title">Debugging Rule of Thumb #1</p>
-<p class="last">When an interpreter/compiler gives you a line number, it doesn’t necessarily mean that line is incorrect
+<p class="admonition-title">Debugging Rule of Thumb #1</p>
+<p>When an interpreter/compiler gives you a line number, it doesn’t necessarily mean that line is incorrect
 (and that is has to be fixed). Always look at the offending lines <em>and</em> the lines before
 it to see if you can spot the issue.</p>
 </div>
@@ -210,7 +195,7 @@ collect2: error: ld returned 1 exit status
 </div>
 <p>This is a <strong>linker error</strong>, not a compiler error. Remember what’s happening behind the scenes:</p>
 <ul>
-<li><p class="first">The compiler first compiles <code class="docutils literal notranslate"><span class="pre">main.c</span></code> and <code class="docutils literal notranslate"><span class="pre">greet.c</span></code> into object files. Let’s do this explicitly:</p>
+<li><p>The compiler first compiles <code class="docutils literal notranslate"><span class="pre">main.c</span></code> and <code class="docutils literal notranslate"><span class="pre">greet.c</span></code> into object files. Let’s do this explicitly:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gcc</span> <span class="n">main</span><span class="o">.</span><span class="n">c</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">o</span> <span class="n">main</span><span class="o">.</span><span class="n">o</span>
 <span class="n">gcc</span> <span class="n">greet</span><span class="o">.</span><span class="n">c</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">o</span> <span class="n">greet</span><span class="o">.</span><span class="n">o</span>
 </pre></div>
@@ -218,7 +203,7 @@ collect2: error: ld returned 1 exit status
 <p>(the “-c” flag tells gcc to only run the compile phase, and not the linking phase)</p>
 <p>Notice how we get no errors.</p>
 </li>
-<li><p class="first">Next, it links them together to produce the executable. If we do this explicilty, we get
+<li><p>Next, it links them together to produce the executable. If we do this explicilty, we get
 the same error as before:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gcc</span> <span class="n">greet</span><span class="o">.</span><span class="n">o</span> <span class="n">main</span><span class="o">.</span><span class="n">o</span> <span class="o">-</span><span class="n">o</span> <span class="n">main</span>
 </pre></div>
@@ -234,13 +219,13 @@ able to compile <code class="docutils literal notranslate"><span class="pre">mai
 it doesn’t include a <code class="docutils literal notranslate"><span class="pre">bye</span></code> function, it includes a <code class="docutils literal notranslate"><span class="pre">goodbye</span></code> function.</p>
 <p>This is why we get an error:</p>
 <ul class="simple">
-<li>The <code class="docutils literal notranslate"><span class="pre">greet.h</span></code> header file includes a declaration for <code class="docutils literal notranslate"><span class="pre">bye()</span></code>. This basically
+<li><p>The <code class="docutils literal notranslate"><span class="pre">greet.h</span></code> header file includes a declaration for <code class="docutils literal notranslate"><span class="pre">bye()</span></code>. This basically
 says “there is an implementation for <code class="docutils literal notranslate"><span class="pre">bye()</span></code> somewhere else”. So, compiling
 <code class="docutils literal notranslate"><span class="pre">main.c</span></code> by itself results in the call to <code class="docutils literal notranslate"><span class="pre">bye()</span></code> having an undefined
 reference, under the expectation that we will simply link with the implementation
-of <code class="docutils literal notranslate"><span class="pre">bye</span></code> at a later point.</li>
-<li>The <code class="docutils literal notranslate"><span class="pre">greet.c</span></code> file contains no <code class="docutils literal notranslate"><span class="pre">bye()</span></code> function so, when we link <code class="docutils literal notranslate"><span class="pre">main.o</span></code>
-and <code class="docutils literal notranslate"><span class="pre">greet.o</span></code>, the linker complains that it was unable to find an implementation for <code class="docutils literal notranslate"><span class="pre">bye</span></code>.</li>
+of <code class="docutils literal notranslate"><span class="pre">bye</span></code> at a later point.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">greet.c</span></code> file contains no <code class="docutils literal notranslate"><span class="pre">bye()</span></code> function so, when we link <code class="docutils literal notranslate"><span class="pre">main.o</span></code>
+and <code class="docutils literal notranslate"><span class="pre">greet.o</span></code>, the linker complains that it was unable to find an implementation for <code class="docutils literal notranslate"><span class="pre">bye</span></code>.</p></li>
 </ul>
 <p>Linker errors can be more cryptic than compiler errors (notice how the error message doesn’t tell
 us the line where the undefined reference happens). We can make them slightly less cryptic by
@@ -269,19 +254,19 @@ Runtime Errors</em></p>
 However, if we try to run the program, we will get a segmentation fault.</p>
 <p>How do we go about solving this error? We need to follow these rules of thumb:</p>
 <div class="admonition-debugging-rule-of-thumb-2 admonition">
-<p class="first admonition-title">Debugging Rule of Thumb #2</p>
+<p class="admonition-title">Debugging Rule of Thumb #2</p>
 <p>If a compiler spits out multiple errors/warnings, start by trying to resolve <em>only</em> the first one.
 It is likely that the rest of the errors/warning are <strong>spurious errors</strong> (errors that result
 from a previous error) that will go away as soon as you resolve the first error.</p>
-<p class="last"><em>Corollary</em>: Don’t get overwhelmed when you get a huge number of errors. Focus on the first one, solve
+<p><em>Corollary</em>: Don’t get overwhelmed when you get a huge number of errors. Focus on the first one, solve
 it, and try compiling again. If you get a different set of errors, repeat the process: focus only on
 the first one, solve it, etc.</p>
 </div>
 <div class="admonition-debugging-rule-of-thumb-3 admonition">
-<p class="first admonition-title">Debugging Rule of Thumb #3</p>
+<p class="admonition-title">Debugging Rule of Thumb #3</p>
 <p>Treat warnings as seriously as compiler errors. While a warning will still allow your program to
 compile, it may be a sign of trouble further down the road.</p>
-<p class="last"><em>Corollary</em>: Do not try to debug runtime errors (like segfaults) until you have resolved all
+<p><em>Corollary</em>: Do not try to debug runtime errors (like segfaults) until you have resolved all
 compiler warnings.</p>
 </div>
 <p>In the above example, the warning message is directly related to why we get a segfault later on:</p>
@@ -302,18 +287,7 @@ warnings to focus your search).</p>
 <span id="id1"></span><h3>Runtime Errors<a class="headerlink" href="#runtime-errors" title="Permalink to this headline">¶</a></h3>
 <p>Runtime errors are errors that make a program crash while it is running.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-1-0 docutils container">
-<div class="docutils container">
-C</div>
-</div>
-<div class="item sphinx-data-tab-1-1 docutils container">
-<div class="docutils container">
-Python</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment sphinx-data-tab-1-0 active docutils container">
-<p>For example, in the <code class="docutils literal notranslate"><span class="pre">examples/runtime/</span></code> directory we have a simple program that takes
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-1-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-1-1-0" name="1-0" role="tab" tabindex="0">C</button><button aria-controls="panel-1-1-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-1-1-1" name="1-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-1-1-0" class="sphinx-tabs-panel" id="panel-1-1-0" name="1-0" role="tabpanel" tabindex="0"><p>For example, in the <code class="docutils literal notranslate"><span class="pre">examples/runtime/</span></code> directory we have a simple program that takes
 two integers as command-line parameters and divides them:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ gcc runtime-error.c -o runtime-error
 $ ./runtime-error 10 2
@@ -335,9 +309,7 @@ and, at least in C, this results in a single very unhelpful error message: “Se
 <p>As we’ll see later on, we will have to use a debugger (like GDB) to track down the origin of the
 error in C but, ultimately, it is generally possible to track down the origin of runtime errors
 down to the exact line that triggers them.</p>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment sphinx-data-tab-1-1 docutils container">
-<p>In Python runtime errors typically happen as the result of an uncaught exception. For example,
+</div><div aria-labelledby="tab-1-1-1" class="sphinx-tabs-panel" hidden="true" id="panel-1-1-1" name="1-1" role="tabpanel" tabindex="0"><p>In Python runtime errors typically happen as the result of an uncaught exception. For example,
 in the <code class="docutils literal notranslate"><span class="pre">examples/runtime/</span></code> directory we have a simple program that takes
 two integers as command-line parameters and divides them:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 runtime-error.py 10 2
@@ -362,26 +334,14 @@ while the exception was raised in line 6 (in function <code class="docutils lite
 mean that we have to fix that line specifically. In this case, we could validate our
 inputs in the main portion of the program (before the call to function <code class="docutils literal notranslate"><span class="pre">bar</span></code>) to ensure
 that division by zero from ever happening.</p>
-</div>
-</div>
+</div></div>
 </div>
 <div class="section" id="logic-errors">
 <h3>Logic errors<a class="headerlink" href="#logic-errors" title="Permalink to this headline">¶</a></h3>
 <p>When your program compiles and runs (without crashes) but exhibits incorrect behavior, that is
 known as a logic error (i.e., there is an error in the “logic” of your program).</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-2-0 docutils container">
-<div class="docutils container">
-C</div>
-</div>
-<div class="item sphinx-data-tab-2-1 docutils container">
-<div class="docutils container">
-Python</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment sphinx-data-tab-2-0 active docutils container">
-<p>For example,
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-2-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-2-2-0" name="2-0" role="tab" tabindex="0">C</button><button aria-controls="panel-2-2-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-2-2-1" name="2-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-2-2-0" class="sphinx-tabs-panel" id="panel-2-2-0" name="2-0" role="tabpanel" tabindex="0"><p>For example,
 let’s look at <code class="docutils literal notranslate"><span class="pre">distance.c</span></code> in the <code class="docutils literal notranslate"><span class="pre">examples/logic/</span></code> directory. It takes four command-line
 parameters X1 Y1 X2 Y2 representing two points in 2-dimensional space, and computes the distance
 between them:</p>
@@ -401,9 +361,7 @@ The distance from (-1.00, -1.00) to (2.00, 3.00) is 2.24
 </pre></div>
 </div>
 <p>The correct distances are 2 and 5, respectively. Can you spot what is wrong with the code?</p>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment sphinx-data-tab-2-1 docutils container">
-<p>For example,
+</div><div aria-labelledby="tab-2-2-1" class="sphinx-tabs-panel" hidden="true" id="panel-2-2-1" name="2-1" role="tabpanel" tabindex="0"><p>For example,
 let’s look at <code class="docutils literal notranslate"><span class="pre">distance.py</span></code> in the <code class="docutils literal notranslate"><span class="pre">examples/logic/</span></code> directory. It takes four command-line
 parameters X1 Y1 X2 Y2 representing two points in 2-dimensional space, and computes the distance
 between them:</p>
@@ -422,8 +380,7 @@ The distance from (-1.00, -1.00) to (2.00, 3.00) is 2.24
 </pre></div>
 </div>
 <p>The correct distances are 2 and 5, respectively. Can you spot what is wrong with the code?</p>
-</div>
-</div>
+</div></div>
 <p>Logic errors are probably the hardest errors to debug, because, unlike build and runtime errors,
 our code actually runs without crashing or producing any noticeable error. However, the <em>behaviour</em>
 of the code is incorrect (and, in many cases, the program will work correctly in some cases but not
@@ -444,8 +401,8 @@ Solving runtime errors in Python usually involves interpreting the stack trace w
 out the root cause of the error.</p>
 <p>Solving logic errors is trickier (as we saw earlier, we don’t get clues on where the error may be located).</p>
 <div class="admonition-debugging-rule-of-thumb-4 admonition">
-<p class="first admonition-title">Debugging Rule of Thumb #4</p>
-<p class="last">When debugging an error (but specially a logic error), narrow down your search as much as possible.
+<p class="admonition-title">Debugging Rule of Thumb #4</p>
+<p>When debugging an error (but specially a logic error), narrow down your search as much as possible.
 Start by focusing on the likely source of the error, and then refine your search using the techniques
 described below. Don’t waste your time looking through the parts of the code that actually work.</p>
 </div>
@@ -468,9 +425,9 @@ correct. Let’s say that B returns an incorrect value; you then narrow down you
 You could then print out the values of the local variables at certain key points, to see whether
 they are being updated correctly.</p>
 <div class="admonition-debugging-rule-of-thumb-5 admonition">
-<p class="first admonition-title">Debugging Rule of Thumb #5</p>
+<p class="admonition-title">Debugging Rule of Thumb #5</p>
 <p><strong>Assume nothing, verify everything.</strong></p>
-<p class="last">If you find yourself thinking “I’m pretty sure this variable has the
+<p>If you find yourself thinking “I’m pretty sure this variable has the
 expected value” and “No need to bother debugging this function, I’m sure it works correctly”, you
 should still verify that this is the case.</p>
 </div>
@@ -488,9 +445,9 @@ print debugging, except you get to automatically “print” every single variab
 and there are also command-line debuggers like <a class="reference external" href="https://www.gnu.org/software/gdb/">GDB</a> for C code and
 <a class="reference external" href="https://docs.python.org/3/library/pdb.html">pdb</a> for Python.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This guide currently does not include specific instructions on how to use a debugger. For tracking
-down C runtime errors, we recommend looking at the <a class="reference external" href="https://uchicago-cs.github.io/cmsc22000/labs/lab4/">Debugging Lab</a>
+<p class="admonition-title">Note</p>
+<p>This guide currently does not include specific instructions on how to use a debugger. For tracking
+down C runtime errors, we recommend looking at the <a class="reference external" href="https://uchicago-cs.github.io/cmsc22000/hw/hw4.html">Debugging Homework</a>
 from CMSC 22000 (the class this guide was originally written for).</p>
 </div>
 </div>
@@ -503,18 +460,7 @@ from CMSC 22000 (the class this guide was originally written for).</p>
 is a boolean condition which, if false, will make our program exit immediately, with a helpful message
 telling us what boolean condition failed.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-3-0 docutils container">
-<div class="docutils container">
-C</div>
-</div>
-<div class="item sphinx-data-tab-3-1 docutils container">
-<div class="docutils container">
-Python</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment sphinx-data-tab-3-0 active docutils container">
-<p>For example, see the <code class="docutils literal notranslate"><span class="pre">array.c</span></code> file in <code class="docutils literal notranslate"><span class="pre">examples/assertions/</span></code>. It includes an <code class="docutils literal notranslate"><span class="pre">add_array</span></code>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-3-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-3-3-0" name="3-0" role="tab" tabindex="0">C</button><button aria-controls="panel-3-3-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-3-3-1" name="3-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-3-3-0" class="sphinx-tabs-panel" id="panel-3-3-0" name="3-0" role="tabpanel" tabindex="0"><p>For example, see the <code class="docutils literal notranslate"><span class="pre">array.c</span></code> file in <code class="docutils literal notranslate"><span class="pre">examples/assertions/</span></code>. It includes an <code class="docutils literal notranslate"><span class="pre">add_array</span></code>
 function that includes an assertion:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">add_array</span><span class="p">(</span><span class="nb">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="nb">int</span> <span class="n">length</span><span class="p">)</span>
 <span class="p">{</span>
@@ -530,9 +476,7 @@ in the program crashing with an error message like this:</p>
 </div>
 <p>Assertion errors will tell us the file and line where the assertion failed. This gives us a lot more
 information than just a <code class="docutils literal notranslate"><span class="pre">Segmentation</span> <span class="pre">fault</span></code> message, and will make the error much easier to debug.</p>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment sphinx-data-tab-3-1 docutils container">
-<p>For example, see the <code class="docutils literal notranslate"><span class="pre">inventory.py</span></code> file in <code class="docutils literal notranslate"><span class="pre">examples/assertions/</span></code>. In this simple program,
+</div><div aria-labelledby="tab-3-3-1" class="sphinx-tabs-panel" hidden="true" id="panel-3-3-1" name="3-1" role="tabpanel" tabindex="0"><p>For example, see the <code class="docutils literal notranslate"><span class="pre">inventory.py</span></code> file in <code class="docutils literal notranslate"><span class="pre">examples/assertions/</span></code>. In this simple program,
 we have an <code class="docutils literal notranslate"><span class="pre">inv</span></code> dictionary to keep track of an inventory (mapping item names to their
 quantity), and a simple <code class="docutils literal notranslate"><span class="pre">update_inventory</span></code> function that updates the number of items in the inventory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">update_inventory</span><span class="p">(</span><span class="n">inv</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">quantity</span><span class="p">):</span>
@@ -565,8 +509,7 @@ that tells us exactly what is wrong:</p>
 </div>
 <p>So, if we inadvertently call the function with an incorrect value, our program will
 be much easier to debug.</p>
-</div>
-</div>
+</div></div>
 <p>Of course, these are simple examples where you could’ve figured out the issue just by code
 inspection. However, in much larger programs, where a misbehaving function could cause
 a series of baffling spurious errors somewhere else in our program, these kind of logic
@@ -581,31 +524,17 @@ debugger to see whether anything looks “off” (e.g., a variable has a value w
 We can facilitate this process by adding <em>logging statements</em> that provide information on what the
 program is doing.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-4-0 docutils container">
-<div class="docutils container">
-C</div>
-</div>
-<div class="item sphinx-data-tab-4-1 docutils container">
-<div class="docutils container">
-Python</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment sphinx-data-tab-4-0 active docutils container">
-<p>For example, we could add the following statement at the top of the <code class="docutils literal notranslate"><span class="pre">add_array</span></code>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-4-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-4-4-0" name="4-0" role="tab" tabindex="0">C</button><button aria-controls="panel-4-4-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-4-4-1" name="4-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-4-4-0" class="sphinx-tabs-panel" id="panel-4-4-0" name="4-0" role="tabpanel" tabindex="0"><p>For example, we could add the following statement at the top of the <code class="docutils literal notranslate"><span class="pre">add_array</span></code>
 function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">printf</span><span class="p">(</span><span class="s2">&quot;Adding up array with </span><span class="si">%i</span><span class="s2"> elements.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment sphinx-data-tab-4-1 docutils container">
-<p>For example, we could add the following statement at the top of the <code class="docutils literal notranslate"><span class="pre">update_inventory</span></code>
+</div><div aria-labelledby="tab-4-4-1" class="sphinx-tabs-panel" hidden="true" id="panel-4-4-1" name="4-1" role="tabpanel" tabindex="0"><p>For example, we could add the following statement at the top of the <code class="docutils literal notranslate"><span class="pre">update_inventory</span></code>
 function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Updating inventory: Quantity of &#39;</span><span class="si">{}</span><span class="s2">&#39; set to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">quantity</span><span class="p">))</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>Note that we wouldn’t add this in reaction to an error: we would add it from the get-go,
 because the information included in the log message could be useful if we do have to debug
 the program. In particular, it would allow us to immediately <em>verify</em> whether the function is
@@ -624,13 +553,13 @@ we could use Python’s built-in <a class="reference external" href="https://doc
 code already has unit tests associated with it, there is a rule of thumb you should observe
 whenever the tests fail:</p>
 <div class="admonition-debugging-rule-of-thumb-6 admonition">
-<p class="first admonition-title">Debugging Rule of Thumb #6</p>
+<p class="admonition-title">Debugging Rule of Thumb #6</p>
 <p>When your code fails multiple tests, pick the simplest test that is failing,
 and fix your code to make that test pass.</p>
 <p>Once you update your code, re-run the tests. If you pass that test, but still fail others, repeat
 this same process: pick the simplest test that is failing, and focus on
 just that test.</p>
-<p class="last">The reason for this is similar to <strong>Debugging Rule of Thumb #2</strong>: having
+<p>The reason for this is similar to <strong>Debugging Rule of Thumb #2</strong>: having
 your code fail lots of tests may seem overwhelming, but it is possible that
 many of the failures are <em>spurious</em> (errors that result
 from a previous error). Sometimes, fixing your code to pass
@@ -651,46 +580,48 @@ they can’t see <em>exactly</em> what you’re seeing, nor can they interactive
 the issue with you.</p>
 <p>Below we have compiled a list of guidelines and tips on how to ask effective questions:</p>
 <ul class="simple">
-<li>Make sure you’re asking an actual question. You need to describe a specific issue
+<li><p>Make sure you’re asking an actual question. You need to describe a specific issue
 you’re encountering, and <em>why</em> you’re stuck on it (e.g., you are not getting the
 expected result, the tests are failing in a way you do not understand, etc.).
 Writing a post that says “I can’t get this test to work, I’ve pushed my code.
-Please look at it.” is not a question!</li>
-<li>It will be much easier for someone to help you if they are able to <strong>reproduce</strong> the
+Please look at it.” is not a question!</p></li>
+<li><p>It will be much easier for someone to help you if they are able to <strong>reproduce</strong> the
 <strong>exact</strong> issue you are encountering (i.e., when they run your code, they must be able
 to observe the exact same issue you’re encountering). You usually want to make sure
-you do the following:<ul>
-<li>If your code lives in a repository, make sure you push your latest code to that
+you do the following:</p>
+<ul>
+<li><p>If your code lives in a repository, make sure you push your latest code to that
 repository. If the person helping you can’t see your code, they won’t be able
-to run it and reproduce the error.</li>
-<li>Include a <em>detailed</em> description of the <em>exact</em> chain of events that leads to
+to run it and reproduce the error.</p></li>
+<li><p>Include a <em>detailed</em> description of the <em>exact</em> chain of events that leads to
 the issue you’re encountering. This includes providing the <em>exact</em> commands you
 are using to compile your code and run it, even if they seem completely foolproof
-to you (remember Rule of Thumb #5: Assume nothing!)</li>
-<li>If something is “wrong”, describe in what way it seems wrong to you.
+to you (remember Rule of Thumb #5: Assume nothing!)</p></li>
+<li><p>If something is “wrong”, describe in what way it seems wrong to you.
 For example, were you expecting a particular output but got a different one?
 If a piece of code behaving in a way you were not expecting? etc. It can be useful
-explain what you were expecting the code to do, and what you encountered instead.</li>
-<li>Provide information on where you are running the code. In some cases, a bug will
+explain what you were expecting the code to do, and what you encountered instead.</p></li>
+<li><p>Provide information on where you are running the code. In some cases, a bug will
 manifest itself on one operating system, but not in another. If you don’t specify
 where you’re encountering the bug, the person helping you may run it in an environment
-that does not reproduce the bug, and may just reply “works for me”.</li>
+that does not reproduce the bug, and may just reply “works for me”.</p></li>
 </ul>
 </li>
-<li>If you encounter an error message (or any other unexpected output), please make sure you
+<li><p>If you encounter an error message (or any other unexpected output), please make sure you
 include the <strong>full and unabridged</strong> error message (or unexpected output). While you may
 think you’re being helpful by providing only the portion of the error message that
 is relevant, this also means the person helping you has less information to be able
 to help you with. Summarizing the message (e.g., “The test says something about an
 unexpected sequence number”) is similarly unhelpful. In general, the more information
-you provide, the easier it will be for us to help you.</li>
-<li>Don’t post screenshots of the output. Screenshots are not searchable and not copy-pasteable.</li>
+you provide, the easier it will be for us to help you.</p></li>
+<li><p>Don’t post screenshots of the output. Screenshots are not searchable and not copy-pasteable.</p></li>
 </ul>
 </div>
 </div>
 
 
           </div>
+          
       </div>
       <div class="clearer"></div>
     </div>
@@ -698,8 +629,8 @@ you provide, the easier it will be for us to help you.</li>
       &copy;2018-2019, Borja Sotomayor.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/index.rst.txt"

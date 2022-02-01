@@ -441,7 +441,7 @@ and there are also command-line debuggers like `GDB <https://www.gnu.org/softwar
 .. note:: 
 
    This guide currently does not include specific instructions on how to use a debugger. For tracking
-   down C runtime errors, we recommend looking at the `Debugging Lab <https://uchicago-cs.github.io/cmsc22000/labs/lab4/>`_ 
+   down C runtime errors, we recommend looking at the `Debugging Homework <https://uchicago-cs.github.io/cmsc22000/hw/hw4.html>`_ 
    from CMSC 22000 (the class this guide was originally written for).
 
 Preemptive techniques
